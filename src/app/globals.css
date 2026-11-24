@@ -1,0 +1,386 @@
+@import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+/* The four colours of the card. Every other tone is a mix of these four. */
+:root {
+  --wine: #4a0d1c;
+  --gold: #d4a84b;
+  --ivory: #fff3dc;
+  --marigold: #f08a24;
+
+  /* Wine: lifted for panels and alcoves */
+  --wine-panel: color-mix(in oklab, var(--wine) 88%, var(--gold));
+  --wine-raised: color-mix(in oklab, var(--wine) 76%, var(--gold));
+  /* Gold: brass for shade, pale gold for highlights */
+  --brass: color-mix(in oklab, var(--gold) 58%, var(--wine));
+  --gold-pale: color-mix(in oklab, var(--gold) 50%, var(--ivory));
+  /* Marigold: ember for shade, saffron for glow */
+  --ember: color-mix(in oklab, var(--marigold) 62%, var(--wine));
+  --saffron: color-mix(in oklab, var(--marigold) 55%, var(--gold));
+  /* Ivory: softened for secondary text */
+  --ivory-soft: color-mix(in oklab, var(--ivory) 82%, var(--wine));
+}
+
+@theme inline {
+  --color-wine: var(--wine);
+  --color-gold: var(--gold);
+  --color-ivory: var(--ivory);
+  --color-marigold: var(--marigold);
+  --color-wine-panel: var(--wine-panel);
+  --color-wine-raised: var(--wine-raised);
+  --color-brass: var(--brass);
+  --color-gold-pale: var(--gold-pale);
+  --color-ember: var(--ember);
+  --color-saffron: var(--saffron);
+  --color-ivory-soft: var(--ivory-soft);
+
+  --font-script: var(--font-great-vibes), cursive;
+  --font-serif: var(--font-cormorant), "Times New Roman", serif;
+  --font-deva: var(--font-tiro-devanagari), var(--font-cormorant), serif;
+  --font-hand: var(--font-gochi-hand), cursive;
+
+  --ease-grace: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  background: var(--wine);
+}
+
+body {
+  background: var(--wine);
+  color: var(--ivory);
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold-pale);
+  outline-offset: 3px;
+}
+
+/* ── Ornament motion: transform and opacity only ───────────────────────── */
+
+@keyframes ornament-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes diya-flicker {
+  0%,
+  100% {
+    transform: scale(1, 1) rotate(0deg);
+    opacity: 1;
+  }
+  22% {
+    transform: scale(0.96, 1.05) rotate(-2deg);
+    opacity: 0.94;
+  }
+  47% {
+    transform: scale(1.03, 0.96) rotate(1.5deg);
+    opacity: 1;
+  }
+  71% {
+    transform: scale(0.97, 1.07) rotate(2.5deg);
+    opacity: 0.9;
+  }
+}
+
+@keyframes diya-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes toran-sway {
+  0%,
+  100% {
+    transform: rotate(-2.2deg);
+  }
+  50% {
+    transform: rotate(2.2deg);
+  }
+}
+
+.mandala-ring {
+  transform-origin: 0 0;
+}
+.mandala-spin .mandala-ring {
+  animation: ornament-spin var(--mandala-turn, 120s) linear infinite;
+}
+.mandala-spin .mandala-ring:nth-of-type(2) {
+  animation-direction: reverse;
+  animation-duration: calc(var(--mandala-turn, 120s) * 1.5);
+}
+
+.diya-flame,
+.diya-glow {
+  transform-box: fill-box;
+  opacity: 0;
+  transition: opacity 0.9s ease-out;
+}
+.diya-flame {
+  transform-origin: 50% 100%;
+}
+.diya-glow {
+  transform-origin: 50% 50%;
+}
+.diya-lit .diya-flame {
+  opacity: 1;
+  animation: diya-flicker 1.9s ease-in-out infinite;
+}
+.diya-lit .diya-glow {
+  opacity: 0.6;
+  animation: diya-glow 2.7s ease-in-out infinite;
+}
+
+.toran-string {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+}
+.toran-sway .toran-string {
+  animation: toran-sway 5.5s ease-in-out infinite;
+}
+
+/* ── Gate ──────────────────────────────────────────────────────────────── */
+
+/* Returning visitors (flag set before first paint) never see the doors. */
+html[data-gate="skip"] .gate {
+  display: none;
+}
+
+/* While the doors are in the page, the page behind them cannot scroll. */
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-gate="skip"]):not([data-gate="open"]):has(.gate) {
+    overflow: hidden;
+  }
+}
+
+@keyframes gate-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  70%,
+  100% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+}
+.gate-pulse {
+  animation: gate-pulse 2.6s ease-out infinite;
+}
+
+/* rays of lamp-light turning slowly behind the seal */
+.gate-rays {
+  background: repeating-conic-gradient(
+    color-mix(in oklab, var(--gold-pale) 30%, transparent) 0deg 5deg,
+    transparent 5deg 15deg
+  );
+  mask-image: radial-gradient(circle, black 22%, transparent 68%);
+  animation: ornament-spin 70s linear infinite;
+}
+
+.gate-studs {
+  background: radial-gradient(circle, var(--gold) 0 3px, var(--brass) 3.5px 4.5px, transparent 5px) center / 28px
+    100% repeat-x;
+}
+
+.gate button:focus-visible .gate-label,
+.gate button:focus-visible:not(:has(.gate-label)) {
+  outline: 2px solid var(--gold-pale);
+  outline-offset: 4px;
+}
+
+@keyframes scroll-cue {
+  0%,
+  100% {
+    transform: translateY(-5px);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+.scroll-cue {
+  animation: scroll-cue 2.2s ease-in-out infinite;
+}
+
+/* Golden Moments: each day sits in an alcove with an arched head */
+.moment-card {
+  border-radius: 50% 50% 0.5rem 0.5rem / 9% 9% 0.5rem 0.5rem;
+}
+
+/* ── Portrait covers, name shimmer, countdown ──────────────────────────── */
+
+/* Covers only exist once a scroll scene has armed them, so without
+   JavaScript (or with reduced motion) the portraits are simply there. */
+.portrait-cover {
+  visibility: hidden;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+[data-armed] .portrait-cover {
+  visibility: visible;
+}
+
+/* a carved door leaf: frame, inset panel, brass boss */
+.portrait-door {
+  background:
+    radial-gradient(circle at 50% 50%, var(--gold-pale) 0 5%, var(--brass) 5.5% 8.5%, transparent 9%),
+    radial-gradient(circle at 50% 50%, transparent 0 17%, color-mix(in oklab, var(--gold) 45%, transparent) 17.5% 19%, transparent 19.5%),
+    linear-gradient(to bottom, var(--wine-raised), var(--wine-panel));
+  box-shadow:
+    inset 0 0 0 5px var(--wine-panel),
+    inset 0 0 0 6.5px var(--brass),
+    inset 0 0 0 11px var(--wine-raised),
+    inset 0 0 0 12px color-mix(in oklab, var(--gold) 60%, transparent);
+}
+
+/* the ghoonghat: an embroidered veil with a scalloped gold hem, and a sheer layer under it */
+.portrait-veil {
+  background:
+    radial-gradient(circle, var(--gold-pale) 0 1.5px, transparent 2px) 0 0 / 20px 20px,
+    radial-gradient(circle, color-mix(in oklab, var(--gold) 70%, transparent) 0 1px, transparent 1.5px) 10px 10px / 20px 20px,
+    linear-gradient(to bottom, var(--wine-panel), var(--ember) 115%);
+}
+.portrait-veil::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -1px;
+  height: 14px;
+  background: radial-gradient(circle at 50% 0, transparent 0 7px, var(--gold) 7.5px 9.5px, transparent 10px) 0 0 / 20px 14px repeat-x;
+  border-top: 3px double var(--gold);
+}
+.portrait-veil-sheer {
+  background:
+    radial-gradient(circle, color-mix(in oklab, var(--gold-pale) 80%, transparent) 0 1px, transparent 1.5px) 0 0 / 14px 14px,
+    color-mix(in oklab, var(--marigold) 42%, transparent);
+}
+
+/* light passing across a portrait once it is uncovered */
+.portrait-shine {
+  background: linear-gradient(105deg, transparent 30%, color-mix(in oklab, var(--ivory) 75%, transparent) 50%, transparent 70%);
+  mix-blend-mode: soft-light;
+  visibility: hidden;
+}
+
+/* the varmala between the two arches */
+.garland-bloom {
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  box-shadow:
+    inset 0 0 0 2px color-mix(in oklab, var(--ember) 55%, transparent),
+    0 0 0 1px color-mix(in oklab, var(--wine) 60%, transparent);
+  background-image: radial-gradient(circle, var(--gold-pale) 0 24%, transparent 26%);
+}
+.garland-tassel {
+  width: 5px;
+  border-radius: 3px;
+  background: repeating-linear-gradient(to bottom, var(--marigold) 0 5px, var(--gold-pale) 5px 8px);
+}
+
+.name-shimmer {
+  background: linear-gradient(100deg, transparent 30%, var(--ivory) 50%, transparent 70%);
+  mix-blend-mode: overlay;
+  visibility: hidden; /* shown only while a scene sweeps it across the name */
+}
+
+@keyframes flip-in {
+  from {
+    transform: perspective(300px) rotateX(-85deg);
+    opacity: 0;
+  }
+}
+.flip-tile::after {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto;
+  border-top: 1px solid color-mix(in oklab, var(--wine) 70%, transparent);
+}
+.flip-digit {
+  display: block;
+  transform-origin: 50% 0;
+  animation: flip-in 0.5s var(--ease-grace);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portrait-door,
+  .portrait-veil,
+  /* the varmala between the two arches */
+.garland-bloom {
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  box-shadow:
+    inset 0 0 0 2px color-mix(in oklab, var(--ember) 55%, transparent),
+    0 0 0 1px color-mix(in oklab, var(--wine) 60%, transparent);
+  background-image: radial-gradient(circle, var(--gold-pale) 0 24%, transparent 26%);
+}
+.garland-tassel {
+  width: 5px;
+  border-radius: 3px;
+  background: repeating-linear-gradient(to bottom, var(--marigold) 0 5px, var(--gold-pale) 5px 8px);
+}
+
+.name-shimmer {
+    display: none;
+  }
+  .flip-digit {
+    animation: none;
+  }
+  .gate,
+  .hint {
+    display: none;
+  }
+  .mandala-spin .mandala-ring,
+  .diya-lit .diya-flame,
+  .diya-lit .diya-glow,
+  .toran-sway .toran-string {
+    animation: none;
+  }
+}
+
+/* ── Closing: lanterns ─────────────────────────────────────────────────── */
+
+@keyframes lantern-rise {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  8%,
+  80% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate(1.5rem, -140svh);
+    opacity: 0;
+  }
+}
+.lantern {
+  animation: lantern-rise linear infinite paused;
+}
+.closing[data-live] .lantern {
+  animation-play-state: running;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lantern {
+    display: none;
+  }
+}
+
+/* ── The film ───────────────────────────────────────────────────────────── */
+
+/* Inside Remotion every movement comes from the frame number, never from CSS time. */
+.film *,
+.film *::before,
+.film *::after {
+  animation: none !important;
+  transition: none !important;
+}

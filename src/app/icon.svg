@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-32 -32 64 64">
+  <circle r="32" fill="#4A0D1C"/>
+  <g fill="#F08A24" stroke="#D4A84B" stroke-width="1.5">
+    <path id="p" d="M0 -6C7 -12 6 -22 0 -27C-6 -22 -7 -12 0 -6Z"/>
+    <use href="#p" transform="rotate(45)"/><use href="#p" transform="rotate(90)"/><use href="#p" transform="rotate(135)"/>
+    <use href="#p" transform="rotate(180)"/><use href="#p" transform="rotate(225)"/><use href="#p" transform="rotate(270)"/><use href="#p" transform="rotate(315)"/>
+  </g>
+  <circle r="5" fill="#FFF3DC"/>
+</svg>
