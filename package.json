@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "portraits": "node scripts/optimize-portraits.mjs",
     "film:studio": "node scripts/film.mjs studio",
