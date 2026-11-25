@@ -36,6 +36,8 @@
 ## The film
 
 - Lives in `src/remotion`. It reuses the site's components and `content/wedding.ts`. Inside it, everything moves by frame number: no GSAP, no CSS animation or transition (the `.film` class switches those off).
+- Its scenes follow the website: when a section of the site changes, change the matching scene.
+- Soundtrack: `public/audio/film.mp3` (made by `scripts/film-music.py`). `public/audio/wedding.mp3`, if ever added, is the website's own music and switches the music toggle on.
 - `src/remotion/schedule.ts` holds every line's timing. `npm test` fails if a line is on screen for less than 1 s plus 0.3 s per word, or if the scene lengths change.
 - The film is a file for WhatsApp only. It is not shown on the website (removed at the couple's request), so nothing from `src/remotion` may be imported by the site.
 
@@ -51,6 +53,6 @@
 - `npm run dev`: develop. `/kitchen-sink` shows every building block.
 - `npm run lint`, `npm run typecheck`, `npm test`: run all three before finishing a phase.
 - `npm run portraits`: regenerate WebP/AVIF after replacing a PNG in `public/portraits`.
-- `npm run film:studio` previews the film; `film:render` writes `out/abhishek-weds-shweta.mp4`; `film:og` writes `public/og.jpg`.
+- `npm run film:studio` previews the film; `film:render` writes `out/abhishek-weds-shweta.mp4` (the kept copy is `film/abhishek-weds-shweta.mp4`); `film:og` writes `public/og.jpg`.
 - `npm run build` empties `out/`, including a rendered film. Render the film after building.
 - Screenshots of finished phases are in `screenshots/phase-N/`.

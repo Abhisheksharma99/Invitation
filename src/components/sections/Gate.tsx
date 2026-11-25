@@ -107,8 +107,12 @@ export function Gate({ hasAudio }: { hasAudio: boolean }) {
   const [gone, setGone] = useState(false);
   const { reducedMotion, lowEnd } = useMotion();
   const seen = useSyncExternalStore(subscribeNever, gateSeenThisSession, () => false);
-  // ?to=Name in the link greets the guest by name
-  const guest = useSyncExternalStore(subscribeNever, () => guestName(window.location.search), () => "");
+  // a name in the link (…/Sharma-Ji or …/?to=Sharma Ji) greets the guest personally
+  const guest = useSyncExternalStore(
+    subscribeNever,
+    () => guestName(window.location.search, window.location.pathname),
+    () => "",
+  );
   const hidden = gone || seen || reducedMotion;
 
   const { contextSafe } = useGSAP({ scope: root });
@@ -194,8 +198,11 @@ export function Gate({ hasAudio }: { hasAudio: boolean }) {
       >
         <span className="flex flex-col items-center gap-5">
           {guest && (
-            <span data-fade className="max-w-[88vw] rounded-full bg-wine px-6 py-1.5 font-script text-[clamp(1.9rem,8vw,2.75rem)] leading-tight text-gold-pale">
-              Dear {guest},
+            <span data-fade className="flex max-w-[88vw] flex-col items-center rounded-3xl border border-gold/70 bg-wine px-6 py-3 text-center">
+              <span className="font-script text-[clamp(2rem,8.6vw,3rem)] leading-tight text-gold-pale">Dear {guest},</span>
+              <span className="text-balance text-[clamp(1.05rem,4.6vw,1.4rem)] leading-snug text-ivory">
+                you are warmly invited to the wedding of {wedding.groom.name} & {wedding.bride.name}
+              </span>
             </span>
           )}
           <Seal />

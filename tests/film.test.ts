@@ -13,11 +13,12 @@ function linesOf(scene: unknown): Line[] {
   return [];
 }
 
-const scenes = [FILM.invocation, FILM.hosts, FILM.groom, FILM.bride, FILM.together, ...FILM.moments, FILM.venue, FILM.closing];
+const scenes = [FILM.invocation, FILM.hosts, FILM.meeting, ...FILM.moments, FILM.venue, FILM.closing];
 
 describe("the film", () => {
-  it("has eleven scenes of the lengths in HANDOVER.md and runs sixty seconds", () => {
-    expect(SCENE_SECONDS).toEqual([6, 7, 6, 6, 4, 4, 4.5, 5, 4, 5.5, 8]);
+  it("has nine scenes and runs sixty seconds", () => {
+    // HANDOVER.md gave groom 6 s, bride 6 s and together 4 s; they are now one 16 s scene, as on the website
+    expect(SCENE_SECONDS).toEqual([6, 7, 16, 4, 4.5, 5, 4, 5.5, 8]);
     expect(TOTAL_FRAMES).toBe(60 * FPS);
   });
 

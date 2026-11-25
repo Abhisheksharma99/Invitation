@@ -46,23 +46,19 @@ export const FILM = {
     // 20 words need the whole scene, so this line is there from the first frame
     invitation: line(w.hosts.invitation, 0, 0),
   },
-  groom: {
-    seconds: 6,
-    name: line(w.groom.name, 0.9, 0.5),
-    lineage: line(w.groom.lineage, 1.3),
-    address: line(w.groom.address, 1.7),
-  },
-  bride: {
-    seconds: 6,
-    with: line(w.bride.with, 0.7),
-    name: line(w.bride.name, 0.9, 0.5),
-    lineage: line(w.bride.lineage, 1.3),
-    address: line(w.bride.address, 1.7),
-  },
-  together: {
-    seconds: 4,
-    line: line(w.couple.line, 0.7, 0.5),
-    date: line(w.couple.date, 1.2),
+  // The couple, as on the website: two arches side by side. His doors open,
+  // her veil lifts, the varmala joins them, then their line and the date.
+  meeting: {
+    seconds: 16,
+    groomName: line(w.groom.name, 1.7, 0.5),
+    groomLineage: line(w.groom.lineage, 2.3),
+    groomAddress: line(w.groom.address, 2.7),
+    with: line(w.bride.with, 5.0),
+    brideName: line(w.bride.name, 6.7, 0.5),
+    brideLineage: line(w.bride.lineage, 7.3),
+    brideAddress: line(w.bride.address, 7.7),
+    couple: line(w.couple.line, 11.4, 0.5),
+    date: line(w.couple.date, 12.0),
   },
   moments: [
     { seconds: 4, ...day(0, 0.4) },
@@ -92,9 +88,7 @@ export const FILM = {
 export const SCENE_SECONDS = [
   FILM.invocation.seconds,
   FILM.hosts.seconds,
-  FILM.groom.seconds,
-  FILM.bride.seconds,
-  FILM.together.seconds,
+  FILM.meeting.seconds,
   ...FILM.moments.map((moment) => moment.seconds),
   FILM.venue.seconds,
   FILM.closing.seconds,

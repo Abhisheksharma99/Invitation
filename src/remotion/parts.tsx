@@ -120,10 +120,13 @@ export function FilmPortrait({
   who,
   children,
   style,
+  zoom = 1,
 }: {
   who: keyof typeof PORTRAITS;
   children?: ReactNode;
   style?: CSSProperties;
+  /** Scale of the picture inside the arch, for a slow settle as it is uncovered. */
+  zoom?: number;
 }) {
   const p = PORTRAITS[who];
   const width = Math.floor(p.width / 0.94); // the picture fills 94% of the arch
@@ -139,6 +142,8 @@ export function FilmPortrait({
             left: "3%",
             top: `${p.top}%`,
             width: "94%",
+            scale: String(zoom),
+            transformOrigin: "50% 0",
             maskImage: "linear-gradient(to bottom, transparent 0, black 5%)",
           }}
         />

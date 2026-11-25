@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, type CSSProperties } from "react";
-import { AbsoluteFill } from "remotion";
+import { AbsoluteFill, random } from "remotion";
 import { dhruviLines } from "@/lib/dhruvi";
 import { MOMENTS } from "@/components/moments";
 import { Arch } from "@/components/ornaments/Arch";
@@ -11,7 +11,7 @@ import { Toran } from "@/components/ornaments/Toran";
 import { FilmDiya, FilmMotif, FilmPortrait, Rise, Say, ramp, useSeconds } from "./parts";
 import { FILM } from "./schedule";
 
-// The eleven scenes. Each mirrors its section of the site: same words, same
+// The nine scenes. Each mirrors its section of the site: same words, same
 // ornaments, same order of events. Sizes are in pixels of a 1080 x 1920 frame.
 
 const column: CSSProperties = {
@@ -86,68 +86,140 @@ export function HostsScene() {
   );
 }
 
-function Halo() {
+// the varmala, in % of the row of arches (the same curve as on the website)
+const garlandPoint = (t: number) => ({
+  x: (1 - t) ** 2 * 23 + 2 * (1 - t) * t * 50 + t ** 2 * 77,
+  y: (1 - t) ** 2 * 8 + 2 * (1 - t) * t * 58 + t ** 2 * 8,
+});
+const BLOOMS = Array.from({ length: 15 }, (_, i) => ({ ...garlandPoint(i / 14), alt: i % 2 === 1, big: i === 7 }));
+const GLINTS = [
+  [-7, 30, 34], [105, 24, 28], [4, 8, 22], [97, 52, 26], [-5, 68, 22],
+];
+
+/** One arch of the couple scene: glow, portrait out of shadow, its cover, glints. */
+function FilmJharokha({ who, from }: { who: "groom" | "bride"; from: number }) {
   const t = useSeconds();
+  const open = ramp(t, from, 1.5);
   return (
-    <div style={{ position: "absolute", top: 200, left: 40, right: 40, opacity: 0.22 }}>
-      <Mandala rotation={t * 4} className="w-full" />
+    <div style={{ position: "relative", width: "46%" }}>
+      <div
+        style={{
+          position: "absolute",
+          inset: "-18%",
+          opacity: 0.7 * ramp(t, from + 0.1, 1.2),
+          background: "radial-gradient(ellipse at 50% 55%, color-mix(in oklab, var(--saffron) 55%, transparent), transparent 68%)",
+        }}
+      />
+      <FilmPortrait who={who} style={{ width: "100%" }} zoom={1.18 - 0.18 * ramp(t, from, 2)}>
+        <div style={{ position: "absolute", inset: 0, background: "var(--wine)", opacity: 0.8 * (1 - ramp(t, from + 0.3, 1.4)) }} />
+        <div style={{ position: "absolute", inset: 0, perspective: 700 }}>
+          {who === "groom" ? (
+            <>
+              <div className="portrait-door" style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "50%", transformOrigin: "0 50%", backfaceVisibility: "hidden", transform: `rotateY(${-112 * open}deg)` }} />
+              <div className="portrait-door" style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: "50%", transformOrigin: "100% 50%", backfaceVisibility: "hidden", transform: `rotateY(${112 * open}deg)` }} />
+            </>
+          ) : (
+            <>
+              <div className="portrait-veil-sheer" style={{ position: "absolute", inset: 0, transformOrigin: "50% 0", transform: `translateY(${-108 * ramp(t, from + 0.35, 1.4)}%) rotateX(${24 * open}deg)` }} />
+              <div className="portrait-veil" style={{ position: "absolute", inset: 0, transformOrigin: "50% 0", transform: `translateY(${-108 * open}%) rotateX(${38 * open}deg)` }} />
+            </>
+          )}
+        </div>
+      </FilmPortrait>
+      {GLINTS.map(([left, top, size], i) => {
+        const k = ramp(t, from + 1.4 + i * 0.12, 0.45);
+        return (
+          <svg key={i} viewBox="-10 -10 20 20" style={{ position: "absolute", left: `${left}%`, top: `${top}%`, width: size, opacity: k, scale: String(k), rotate: `${(1 - k) * -90}deg` }}>
+            <path d="M0 -10L2 -2L10 0L2 2L0 10L-2 2L-10 0L-2 -2Z" fill="var(--gold-pale)" />
+          </svg>
+        );
+      })}
     </div>
   );
 }
 
-function PersonScene({ who }: { who: "groom" | "bride" }) {
+// fireworks: when (s), where (px), which of the three colours
+const BURSTS = [
+  [11.0, 250, 330, 0], [11.4, 820, 260, 1], [11.9, 540, 190, 2], [12.5, 180, 620, 1], [12.9, 900, 560, 0], [13.6, 560, 380, 2], [14.2, 300, 240, 0],
+];
+const SPARK_COLOURS = ["var(--gold)", "var(--marigold)", "var(--ivory)"];
+
+function FilmFireworks() {
   const t = useSeconds();
-  const s = FILM[who];
-  const uncover = ramp(t, 0.1, 1.1);
-  const panel: CSSProperties = { position: "absolute", top: 0, bottom: 0, width: "50%" };
   return (
-    <AbsoluteFill style={{ ...column, paddingTop: 330 }}>
-      <Halo />
-      <FilmPortrait who={who} style={{ position: "relative" }}>
-        {who === "groom" ? (
-          <>
-            <div className="portrait-door border-r-2 border-gold" style={{ ...panel, left: 0, translate: `${-101 * uncover}% 0` }} />
-            <div className="portrait-door border-l-2 border-gold" style={{ ...panel, right: 0, translate: `${101 * uncover}% 0` }} />
-          </>
-        ) : (
-          <div className="portrait-veil" style={{ position: "absolute", inset: 0, translate: `0 ${-104 * uncover}%` }} />
-        )}
-      </FilmPortrait>
-      <div style={{ marginTop: 40, position: "relative" }}>
-        {"with" in s && <Say line={s.with} className="text-ivory-soft" style={{ fontSize: 56, lineHeight: 1 }} />}
-        <Say line={s.name} className={SCRIPT} style={{ fontSize: 230, lineHeight: 1.2 }} />
-        <Say line={s.lineage} style={{ fontSize: 54, lineHeight: 1.3, maxWidth: 860 }} />
-        <Say line={s.address} className="text-ivory-soft" style={{ fontSize: 54, lineHeight: 1.3, maxWidth: 860, marginTop: 10 }} />
-      </div>
+    <AbsoluteFill>
+      {BURSTS.flatMap(([at, x, y, colour], b) => {
+        const age = t - at;
+        if (age < 0 || age > 1.9) return [];
+        return Array.from({ length: 40 }, (_, i) => {
+          const angle = (i / 40) * Math.PI * 2 + random(`a${b}-${i}`) * 0.2;
+          const reach = (230 + random(`r${b}-${i}`) * 150) * (1 - Math.exp(-2.4 * age));
+          const fade = 1 - age / 1.9;
+          return (
+            <div
+              key={`${b}-${i}`}
+              style={{
+                position: "absolute",
+                left: x + Math.cos(angle) * reach,
+                top: y + Math.sin(angle) * reach + 55 * age * age,
+                width: 22 * fade + 4,
+                height: 5,
+                borderRadius: 3,
+                background: random(`c${b}-${i}`) < 0.75 ? SPARK_COLOURS[colour] : SPARK_COLOURS[2],
+                opacity: fade,
+                rotate: `${angle}rad`,
+              }}
+            />
+          );
+        });
+      })}
     </AbsoluteFill>
   );
 }
 
-export const GroomScene = () => <PersonScene who="groom" />;
-export const BrideScene = () => <PersonScene who="bride" />;
-
-export function TogetherScene() {
+export function MeetingScene() {
   const t = useSeconds();
-  const s = FILM.together;
-  const join = ramp(t, 0, 1);
-  const half = (side: "left" | "right"): CSSProperties => ({
-    clipPath: side === "left" ? "inset(-12% 50% -2% -6%)" : "inset(-12% -6% -2% 50%)",
-    translate: `${(side === "left" ? -1 : 1) * (1 - join) * 22}% 0`,
-    opacity: join,
-  });
+  const s = FILM.meeting;
+  const strung = ramp(t, 9.2, 1.5);
+  const lines: CSSProperties = { fontSize: 44, lineHeight: 1.3, maxWidth: 880 };
   return (
-    <AbsoluteFill style={{ ...column, paddingTop: 330 }}>
-      <Halo />
-      <div style={{ position: "relative" }}>
-        <div style={half("left")}>
-          <FilmPortrait who="couple" />
-        </div>
-        <div style={{ ...half("right"), position: "absolute", inset: 0 }}>
-          <FilmPortrait who="couple" />
+    <AbsoluteFill style={{ ...column, paddingTop: 170 }}>
+      <div style={{ position: "relative", width: 900, display: "flex", justifyContent: "space-between" }}>
+        <FilmJharokha who="groom" from={0.3} />
+        <FilmJharokha who="bride" from={5.3} />
+        {/* the varmala */}
+        <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", overflow: "visible" }} viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
+          <path d="M23 8Q50 58 77 8" stroke="var(--brass)" strokeWidth="0.6" pathLength="1" strokeDasharray="1 1.2" strokeDashoffset={1.1 * (1 - strung)} />
+        </svg>
+        {BLOOMS.map((bloom, i) => {
+          const k = ramp(t, 9.4 + i * 0.09, 0.35);
+          return (
+            <span
+              key={i}
+              className={`garland-bloom ${bloom.alt ? "bg-saffron" : "bg-marigold"}`}
+              style={{ position: "absolute", borderRadius: "50%", left: `${bloom.x}%`, top: `${bloom.y}%`, width: bloom.big ? "7.5%" : "5.2%", opacity: k, scale: String(k) }}
+            />
+          );
+        })}
+        <div style={{ position: "absolute", left: "50%", top: `${garlandPoint(0.5).y + 3}%`, translate: "-50% 0", display: "flex", gap: 8, opacity: ramp(t, 10.6, 0.5) }}>
+          {[44, 68, 44].map((height, n) => (
+            <span key={n} className="garland-tassel" style={{ height, width: 9 }} />
+          ))}
         </div>
       </div>
-      <Say line={s.line} className={SCRIPT} style={{ fontSize: 126, lineHeight: 1.25, marginTop: 60, whiteSpace: "nowrap" }} />
-      <Say line={s.date} className={BOLD} style={{ fontSize: 66, marginTop: 14 }} />
+
+      <div style={{ marginTop: 16, display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <Say line={s.groomName} className={SCRIPT} style={{ fontSize: 136, lineHeight: 1.18 }} />
+        <Say line={s.groomLineage} style={lines} />
+        <Say line={s.groomAddress} className="text-ivory-soft" style={lines} />
+        <Say line={s.with} className="text-gold" style={{ fontSize: 46, lineHeight: 1, marginTop: 22 }} />
+        <Say line={s.brideName} className={SCRIPT} style={{ fontSize: 136, lineHeight: 1.18 }} />
+        <Say line={s.brideLineage} style={lines} />
+        <Say line={s.brideAddress} className="text-ivory-soft" style={lines} />
+        <Say line={s.couple} className={SCRIPT} style={{ fontSize: 104, lineHeight: 1.25, marginTop: 44, whiteSpace: "nowrap" }} />
+        <Say line={s.date} className={BOLD} style={{ fontSize: 54 }} />
+      </div>
+      <FilmFireworks />
     </AbsoluteFill>
   );
 }

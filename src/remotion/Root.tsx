@@ -10,7 +10,7 @@ import { OgCard } from "./OgCard";
 import { FPS, HEIGHT, TOTAL_FRAMES, WIDTH } from "./schedule";
 
 // Entry for the Remotion CLI and Studio only. On the website the same
-// compositions run inside @remotion/player and take their fonts from next/font;
+// components take their fonts from next/font;
 // here the fonts are loaded for the renderer and given the same variable names.
 const fonts = {
   "--font-great-vibes": loadScript("normal", { weights: ["400"], subsets: ["latin"] }).fontFamily,
@@ -45,8 +45,8 @@ export function RemotionRoot() {
         height={HEIGHT}
         fps={FPS}
         durationInFrames={TOTAL_FRAMES}
-        // set by scripts/film.mjs when public/audio/wedding.mp3 exists
-        defaultProps={{ hasAudio: process.env.REMOTION_HAS_AUDIO === "1" }}
+        // set by scripts/film.mjs to the soundtrack it found, if any
+        defaultProps={{ audio: process.env.REMOTION_FILM_AUDIO || null }}
       />
       <Still id="OgCard" component={OgStill} width={1200} height={630} />
     </>

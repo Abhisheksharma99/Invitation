@@ -40,8 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# rendered film (npm run film:render) and QA screenshots
-/film/
+# QA screenshots
 /screenshots/
 
 # installed agent skills: restore with `npx skills experimental_install` (see skills-lock.json)
